@@ -5,6 +5,7 @@ export default function Login({ onConnexion }) {
   const [prenom, setPrenom] = useState("");
   const [nom, setNom] = useState("");
   const [ecole, setEcole] = useState("");
+  const [classe, setClasse] = useState("CE2");
   const [motDePasse, setMotDePasse] = useState("");
   const [mode, setMode] = useState("connexion");
   const [loading, setLoading] = useState(false);
@@ -30,7 +31,7 @@ export default function Login({ onConnexion }) {
         const res = await fetch(`${API}/api/eleves/inscription`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prenom, nom, ecole, mot_de_passe: motDePasse }),
+          body: JSON.stringify({ prenom, nom, ecole, classe, mot_de_passe: motDePasse }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.erreur || "Erreur d'inscription");
@@ -148,6 +149,16 @@ export default function Login({ onConnexion }) {
                   onChange={(e) => setEcole(e.target.value)}
                   placeholder="Ex : EPP Cocody, Groupe scolaire..."
                   style={styles.input}/>
+              </div>
+              <div>
+                <div style={styles.label}>Ta classe</div>
+                <select value={classe} onChange={(e) => setClasse(e.target.value)}
+                  style={{ ...styles.input, cursor: "pointer" }}>
+                  <option value="CE1">CE1</option>
+                  <option value="CE2">CE2</option>
+                  <option value="CM1">CM1</option>
+                  <option value="CM2">CM2</option>
+                </select>
               </div>
             </>
           )}

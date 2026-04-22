@@ -12,7 +12,7 @@ export default function Lecons({ matiere, eleve, onChoisirLecon, onRetour }) {
 
   useEffect(() => {
     if (!matiere?.id) return;
-    fetch(`${API}/api/matieres/${matiere.id}/lecons`)
+    fetch(`${API}/api/matieres/${matiere.id}/lecons?niveau=${eleve?.classe || 'CE2'}`)
       .then(r => r.json())
       .then(data => { setLecons(data); setChargement(false); })
       .catch(() => setChargement(false));

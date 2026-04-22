@@ -20,6 +20,7 @@ const ICONES = {
 const COULEUR_DEFAUT = { bg:"#EEEDFE", border:"#AFA9EC", accent:"#534AB7", text:"#26215C", sub:"#534AB7", badge:"#EEEDFE" };
 
 export default function Matieres({ eleve, onChoisirMatiere, onDashboard }) {
+  const classe = eleve?.classe || 'CE2';
   const [matieres, setMatieres] = useState([]);
   const [profil, setProfil] = useState(null);
 
@@ -27,7 +28,7 @@ export default function Matieres({ eleve, onChoisirMatiere, onDashboard }) {
     const fetchData = async () => {
       try {
         const [matRes, profilRes] = await Promise.all([
-          fetch(`${API}/api/matieres`).then(r => r.json()),
+          fetch(`${API}/api/matieres?niveau=${classe}`).then(r => r.json()),
           eleve?.id ? fetch(`${API}/api/gamification/profil/${eleve.id}`).then(r => r.json()) : Promise.resolve(null),
         ]);
 
