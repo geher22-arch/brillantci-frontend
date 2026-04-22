@@ -77,7 +77,7 @@ export default function Login({ onConnexion }) {
           </svg>
           <div>
             <div style={{ fontSize:18, color:"#EEEDFE", fontWeight:600 }}>BrillantCI</div>
-            <div style={{ fontSize:11, color:"#AFA9EC" }}>Révisions CE2 — Côte d'Ivoire</div>
+            <div style={{ fontSize:11, color:"#AFA9EC" }}>Révisions CE1 · CE2 · CM1 · CM2</div>
           </div>
         </div>
 
