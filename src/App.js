@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Login from './pages/Login';
 import Matieres from './pages/Matieres';
 import Lecons from './pages/Lecons';
+import Fiche from './pages/Fiche';
 import Exercices from './pages/Exercices';
 import Dashboard from './pages/Dashboard';
 
@@ -24,14 +25,21 @@ function App() {
 
   if (page === "lecons") {
     return <Lecons matiere={matiere} eleve={eleve}
-      onChoisirLecon={(l) => { setLecon(l); setPage("exercices"); }}
+      onChoisirLecon={(l) => { setLecon(l); setPage("fiche"); }}
       onRetour={() => setPage("matieres")}
+    />;
+  }
+
+  if (page === "fiche") {
+    return <Fiche lecon={lecon} matiere={matiere} eleve={eleve}
+      onCommencerExercices={() => setPage("exercices")}
+      onRetour={() => setPage("lecons")}
     />;
   }
 
   if (page === "exercices") {
     return <Exercices matiere={matiere} lecon={lecon} eleve={eleve}
-      onRetour={() => setPage("lecons")}
+      onRetour={() => setPage("fiche")}
       onTerminer={() => setPage("lecons")} />;
   }
 
