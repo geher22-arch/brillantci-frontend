@@ -1,21 +1,49 @@
 import { useState } from "react";
+import API from "../config";
 
 export default function Login({ onConnexion }) {
   const [prenom, setPrenom] = useState("");
+  const [nom, setNom] = useState("");
+  const [ecole, setEcole] = useState("");
   const [motDePasse, setMotDePasse] = useState("");
   const [mode, setMode] = useState("connexion");
   const [loading, setLoading] = useState(false);
+  const [erreur, setErreur] = useState("");
 
-  const handleSubmit = () => {
-  if (!prenom || !motDePasse) return;
-  setLoading(true);
-  setTimeout(() => {
-    setLoading(false);
-    if (onConnexion) {
-      onConnexion({ prenom: prenom, niveau: 1, xp: 0 });
+  const handleSubmit = async () => {
+    if (!prenom || !motDePasse) return;
+    setLoading(true);
+    setErreur("");
+    try {
+      if (mode === "connexion") {
+        const res = await fetch(`${API}/api/eleves/connexion`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prenom, mot_de_passe: motDePasse }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.erreur || "Erreur de connexion");
+        localStorage.setItem("token", data.token);
+        onConnexion({ ...data.eleve, niveau: 1, xp: 0 });
+      } else {
+        if (!nom || !ecole) { setErreur("Remplis tous les champs"); setLoading(false); return; }
+        const res = await fetch(`${API}/api/eleves/inscription`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prenom, nom, ecole, mot_de_passe: motDePasse }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.erreur || "Erreur d'inscription");
+        setMode("connexion");
+        setNom(""); setEcole("");
+        setErreur("Compte créé ! Connecte-toi maintenant.");
+      }
+    } catch (err) {
+      setErreur(err.message);
+    } finally {
+      setLoading(false);
     }
-  }, 1000);
-};
+  };
 
   const styles = {
     shell: { minHeight:"100vh", background:"#FFF8ED",
@@ -105,6 +133,25 @@ export default function Login({ onConnexion }) {
               style={styles.input}/>
           </div>
 
+          {mode === "inscription" && (
+            <>
+              <div>
+                <div style={styles.label}>Ton nom de famille</div>
+                <input type="text" value={nom}
+                  onChange={(e) => setNom(e.target.value)}
+                  placeholder="Ex : Koné, Traoré..."
+                  style={styles.input}/>
+              </div>
+              <div>
+                <div style={styles.label}>Ton école</div>
+                <input type="text" value={ecole}
+                  onChange={(e) => setEcole(e.target.value)}
+                  placeholder="Ex : EPP Cocody, Groupe scolaire..."
+                  style={styles.input}/>
+              </div>
+            </>
+          )}
+
           <div>
             <div style={styles.label}>Ton mot de passe</div>
             <input type="password" value={motDePasse}
@@ -113,6 +160,15 @@ export default function Login({ onConnexion }) {
               style={styles.input}/>
           </div>
 
+          {erreur && (
+            <div style={{ fontSize:13, padding:"8px 12px", borderRadius:8,
+              background: erreur.includes("créé") ? "#E1F5EE" : "#FCEBEB",
+              color: erreur.includes("créé") ? "#0F6E56" : "#A32D2D",
+              fontWeight:500 }}>
+              {erreur}
+            </div>
+          )}
+
           <button onClick={handleSubmit}
             disabled={loading || !prenom || !motDePasse}
             style={{ width:"100%",
@@ -120,7 +176,7 @@ export default function Login({ onConnexion }) {
               color:"#EEEDFE", border:"none", borderRadius:8,
               padding:"12px", fontSize:16, fontWeight:600,
               cursor:(!prenom||!motDePasse) ? "not-allowed" : "pointer" }}>
-            {loading ? "Chargement..." : mode==="connexion" ? "Me connecter" : "Créer mon compte"}
+            {loading ? "Connexion en cours..." : mode==="connexion" ? "Me connecter" : "Créer mon compte"}
           </button>
         </div>
 
