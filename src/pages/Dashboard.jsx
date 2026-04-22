@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import API from "../config";
 
 const COLORS = {
   violet: '#534AB7',
@@ -34,8 +35,6 @@ const TOUS_LES_BADGES = [
 ];
 
 const JOURS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-
-import API from "../config";
 
 export default function Dashboard({ eleve, onRetour }) {
   const [xpAnim, setXpAnim] = useState(0);
